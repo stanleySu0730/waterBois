@@ -1,0 +1,23 @@
+﻿Zip Code,City,County,Median Income,Population Density (people/square mile),Median Age,Wastewater Unit,Notes
+92106,San Diego,San Diego,"$82,075 ","3,426",39,copies per liter,Point Loma; affluent part of San Diego
+92154,San Diego,San Diego,"$57,618 ","2,157",33,copies per gram,South San Diego; not as wealthy
+92231,Calexico,Imperial,"$35,723 ",684,32,copies per liter,"Agricultural, poor, small town near Mexico-US Border"
+93033,Oxnard,Ventura,"$53,400 ","2,821",28,copies per liter,"Younger, dominated by college and military"
+93933,Marina,Monterey,"$52,736 ","1,743",33,copies per gram,Coastal community north of Monterey
+94110,San Francisco,San Francisco,"$82,111 ","29,816",36,copies per liter,"Mission District of San Francisco, very urban and diverse"
+94111,San Francisco,San Francisco,"$89,722 ","10,791",51,copies per liter,"Financial District of SF, wealthy and older"
+94112,San Francisco,San Francisco,"$71,625 ","23,606",40,copies per liter,"Balboa Park, urban SF"
+94124,San Francisco,San Francisco,"$50,146 ","6,901",35,copies per liter,"Hunters Point, poorest part of SF with large Black population; exemplar copies/liter dataset"
+94132,San Francisco,San Francisco,"$69,223 ","9,045",33,copies per gram,Mix of wealthy communities and large university; exemplar copies/gram dataset
+94134,San Francisco,San Francisco,"$56,716 ","17,001",40,copies per liter,"Portola, SF; heavily Asian and working-class"
+94538,Fremont,Alameda,"$85,945 ","3,715",34,copies per gram,Wealthy and suburban Bay Area
+94560,Newark,Alameda,"$85,847 ","3,084",35,copies per gram,A lot like Fremont but slightly less affluent
+94577,San Leandro,Alameda,"$63,388 ","5,591",40,copies per gram,Suburban/urban mix; high Latino population
+94587,Union City,Alameda,"$82,083 ","3,525",36,copies per gram,A lot like Fremont and Newark
+94607,Oakland,Alameda,"$32,856 ","4,235",36,copies per liter,"Impoverished part of West Oakland, large Black population"
+94954,Petaluma,Sonoma,"$80,645 ",603,39,copies per gram,Suburban/exurban regions of Sonoma near Petaluma
+95060,Santa Cruz,Santa Cruz,"$62,879 ",684,35,copies per gram,Santa Cruz residents and huge UCSC student population
+95076,Watsonville,Santa Cruz,"$55,208 ",604,31,copies per gram,"Diverse small town, lots of agriculture"
+95407,Santa Rosa,Sonoma,"$53,729 ","1,735",30,copies per gram,Southern parts of Santa Rosa
+95422,Clearlake,Lake,"$25,460 ",442,40,copies per liter,"Old, rural, and whiter part of California"
+95492,Windsor,Sonoma,"$80,327 ","1,499",37,copies per gram,Suburb with some vineyards
