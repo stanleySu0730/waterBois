@@ -1,0 +1,13 @@
+﻿Location ID,Zip Code,Median Income,Population Density (people/square mile),Median Age,City,County,Notes
+1,92154,"$57,618 ","2,157",33,San Diego,San Diego,South San Diego; not as wealthy
+2,93933,"$52,736 ","1,743",33,Marina,Monterey,Coastal community north of Monterey
+3,94132,"$69,223 ","9,045",33,San Francisco,San Francisco,Mix of wealthy communities and large university; exemplar copies/gram dataset
+4,94538,"$85,945 ","3,715",34,Fremont,Alameda,Wealthy and suburban Bay Area
+5,94560,"$85,847 ","3,084",35,Newark,Alameda,A lot like Fremont but slightly less affluent
+6,94577,"$63,388 ","5,591",40,San Leandro,Alameda,Suburban/urban mix; high Latino population
+7,94587,"$82,083 ","3,525",36,Union City,Alameda,A lot like Fremont and Newark
+8,94954,"$80,645 ",603,39,Petaluma,Sonoma,Suburban/exurban regions of Sonoma near Petaluma
+9,95060,"$62,879 ",684,35,Santa Cruz,Santa Cruz,Santa Cruz residents and huge UCSC student population
+10,95076,"$55,208 ",604,31,Watsonville,Santa Cruz,"Diverse small town, lots of agriculture"
+11,95407,"$53,729 ","1,735",30,Santa Rosa,Sonoma,Southern parts of Santa Rosa
+12,95492,"$80,327 ","1,499",37,Windsor,Sonoma,Suburb with some vineyards
