@@ -1,6 +1,4 @@
-
-% Specify the file path of your CSV file
-file_path = 'wastewater_case_data_by_zip_code.csv';
-
-% Read the CSV file using csvread
-data = csvread(file_path);
+folder_path = 'C:\Users\stanl\MatLab\waterBois';
+file_name = 'cases_wastewater_vaccine.csv';
+file_path = fullfile (folder_path,file_name);
+data = readtable(file_path);

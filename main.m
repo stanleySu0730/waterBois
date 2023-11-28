@@ -3,6 +3,14 @@ global ConfCase;
 ConfCase = [13823 15165 16449 17567 18545 19159 19567 20460 21017 22522 23233 24262 24936 25699 26238 27866 28665 29526 30334 31241 31703 32269 33247 34552 35447 36324 37374];
 global TotalPopulation;
 TotalPopulation = 9651332;
+global distances;
+folder_path = 'C:\Users\stanl\MatLab\waterBois';
+file_name1 = 'distance.csv';
+file_path1 = fullfile (folder_path,file_name1);
+distances = readtable(file_path1);
+file_name2 = 'cases_wastewater_vaccine.csv';
+file_path2 = fullfile (folder_path,file_name2);
+data = readtable(file_path2);
 
 % Parameter estimation using fmincon
 LowerBounds = [1.00e-9, 1.00e-9, 1.00e-9];
@@ -108,7 +116,8 @@ function value = SIV_RUN_ODE45(z)
     % Calculate betas
     for i = 1:num_compartments
         for j = 1:num_compartments
-            % add distance matrix input
+            % Access distance information from the distances matrix
+            distance_between_i_and_j = distances(i+2, j+1);
             betas(i,j) = beta_star / n_values(j) * 1 / (1 + (distance_between_i_and_j) / constant) * eta_vax(j);
         end
     end
