@@ -1,5 +1,3 @@
-global distances;
-
 % Parameter estimation using fmincon
 LowerBounds = [1.00e-9, 1.00e-9, 1.00e-9];
 UpperBounds = [1.00e-7, 1.00e-3, 1.00e-3];
@@ -30,6 +28,30 @@ for i = 1:length(incomeArray)
     betas = calculate_betas(z, distances);
 end
 
+function dx = SIV(t, x, betas, sigmas, k, alphas, Incomes, gammas, lambdas)
+    num_compartments = length(x) / 5;
+    dx = zeros(5 * num_compartments, 1);
+    
+    for j = 1:num_compartments
+        Sj = x((j-1)*5 + 1);
+        Ej = x((j-1)*5 + 2);
+        Ij = x((j-1)*5 + 3);
+        Rj = x((j-1)*5 + 4);
+        Vj = x((j-1)*5 + 5);
+        
+        sum_beta_I = 0;
+        for i = 1:num_compartments
+            sum_beta_I = sum_beta_I + betas(i, j) * x((i-1)*5 + 3);
+        end
+        
+        dx((j-1)*5 + 1) = -sum_beta_I * Sj + sigmas(j) * Rj;
+        dx((j-1)*5 + 2) = sum_beta_I * Sj - k * Ej;
+        dx((j-1)*5 + 3) = k * Ej - alphas(j) * Incomes(j) * Ij;
+        dx((j-1)*5 + 4) = alphas(j) * Incomes(j) * Ij - sigmas(j) * Rj;
+        dx((j-1)*5 + 5) = gammas * (lambdas(1) * Ej + lambdas(2) * Ij + lambdas(3) * Rj);
+    end
+end
+
 function betas = calculate_betas(z, distances)
     num_compartments = (length(z) - 2) / 8;
     
@@ -49,23 +71,9 @@ function betas = calculate_betas(z, distances)
     end
 end
 
-function SIV_RUN_ODE45(betas, ConfCase, TotalPopulation)
-    % ten_dayCumulative = ...
-    % CumulativeTo10DayStart = ...
-    I0 = ten_dayCumulative;
-    E0 = 20 * I0;
-    R0 = 0.95 * 20 * CumulativeTo10DayStart;
-    CI0 = ConfCase(1);
-    S0 = TotalPopulation - I0 - R0;
-
-    % Time span
-    t_span = 1:length(ConfCase);
-
-    initialvalues = [S0; I0; zeros(length(z)-2, 1)]; 
-
-    % Solve the ODE system
-    [t, y] = ode45(@(t, x) SIV(t, x, betas), t_span, initialvalues);
-
-    % Calculate squared errors
-    % squared_errors = sum((model_cases - ConfCase').^2);
+function value = SIV_RUN_ODE45(z, culmulativeCases, initialvalues, tspan, betas, sigmas, k, alphas, Incomes, gammas, lambdas)
+    [~, y] = ode45(@(t, x) SIV(t, x, betas, sigmas, k, alphas, Incomes, gammas, lambdas), tspan, initialvalues);
+    CI = y(:, 3);
+    diff = CI - culmulativeCases;
+    value = norm(diff, 2);
 end
