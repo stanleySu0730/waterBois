@@ -139,7 +139,7 @@ function betas = SIV_RUN_ODE45(z)
 
     % Calculate m function based on Income and Age
     Income = 10000; % Example value for Income
-    Age = 30; % Example value for Age
+    Age = 30; % Examp       le value for Age
     
     % Input parameters 
     delta = 0.2; 

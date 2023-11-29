@@ -8,3 +8,9 @@ info = readtable(file_path3);
 incomeArray = info.MedianIncome;
 densityArray = info(:,4);
 ageArray = info(:,5);
+
+if any(data(:, 1) == 1)
+    filteredData = data(data(:, 1) == 1, :);
+else
+    disp('No entries found with the first column equal to 1.');
+end

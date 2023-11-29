@@ -1,3 +1,5 @@
+global distances;
+
 % Parameter estimation using fmincon
 LowerBounds = [1.00e-9, 1.00e-9, 1.00e-9];
 UpperBounds = [1.00e-7, 1.00e-3, 1.00e-3];
@@ -9,7 +11,6 @@ problem.options = optimoptions('fmincon', 'MaxFunEvals', 9999, 'MaxIter', 9999);
 numstartpoints = 10;
 ms = MultiStart('UseParallel', true, 'Display', 'iter');
 [b, fval, exitflag, output, manymins] = run(ms, problem, numstartpoints);
-
 for i = 1:length(incomeArray)
     % Get relevant values from arrays 
     Income = incomeArray(i);
@@ -46,4 +47,25 @@ function betas = calculate_betas(z, distances)
             betas(i,j) = beta_star / n_values(j) * 1 / (1 + (distance_between_i_and_j) / constant) * eta_vax(j);
         end
     end
+end
+
+function SIV_RUN_ODE45(betas, ConfCase, TotalPopulation)
+    % ten_dayCumulative = ...
+    % CumulativeTo10DayStart = ...
+    I0 = ten_dayCumulative;
+    E0 = 20 * I0;
+    R0 = 0.95 * 20 * CumulativeTo10DayStart;
+    CI0 = ConfCase(1);
+    S0 = TotalPopulation - I0 - R0;
+
+    % Time span
+    t_span = 1:length(ConfCase);
+
+    initialvalues = [S0; I0; zeros(length(z)-2, 1)]; 
+
+    % Solve the ODE system
+    [t, y] = ode45(@(t, x) SIV(t, x, betas), t_span, initialvalues);
+
+    % Calculate squared errors
+    % squared_errors = sum((model_cases - ConfCase').^2);
 end
