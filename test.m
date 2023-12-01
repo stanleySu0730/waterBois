@@ -1,12 +1,21 @@
 % Define parameters
-n_values = [10, 20, 30];
-constant = 0.5;
-eta_vax = [0.8, 0.9, 0.7];
-distances = [0.1, 0.2, 0.3; 0.4, 0.5, 0.6; 0.7, 0.8, 0.9];
+n_values = [10, 20, 30];  % population densities for each zip code
+constant = 0.5;  % divide distances by this when calculating betas
+eta_vax = [0.8, 0.9, 0.7];    % rate of vaccination
+distances = [0.1, 0.2, 0.3; 0.4, 0.5, 0.6; 0.7, 0.8, 0.9];   % distance matrix - should be symmetric
+beta_star = 1.67391974668301e-08;  % beta value for the general population
+
+sigmas = [0.1, 0.15, 0.12];
+k = 0.05;
+alphas = [0.2, 0.25, 0.18];
+Incomes = [100, 150, 120];
+gammas = 0.1;
+lambdas = [0.3, 0.4, 0.2];
 
 % Calculate betas
-betas = calculate_betas(n_values, constant, eta_vax, distances);
+betas = calculate_betas(n_values, constant, eta_vax, distances,beta_star);
 
+%%
 % Define initial conditions for three compartments (S, E, I, R, V)
 initial_S1 = 800;
 initial_E1 = 10;
@@ -33,26 +42,20 @@ initial_conditions = [
     initial_S3; initial_E3; initial_I3; initial_R3; initial_V3
 ];
 
-sigmas = [0.1, 0.15, 0.12];
-k = 0.05;
-alphas = [0.2, 0.25, 0.18];
-Incomes = [100, 150, 120];
-gammas = 0.1;
-lambdas = [0.3, 0.4, 0.2];
-
+%%
 % Define time span
 tspan = [0 10];
 
 % Solve the ODE
-[t, x] = ode45(@(t, x) SIV(t, x, betas, sigmas, k, alphas, Incomes, gammas, lambdas), tspan, initial_conditions);
-
+[t, y] = ode45(@SIV, tspan, initial_conditions,[], betas, sigmas, k, alphas, Incomes, gammas, lambdas);
+%%
 % Extract compartments from the solution
 num_compartments = length(initial_conditions) / 5;
-S = x(:, 1:num_compartments);
-E = x(:, num_compartments + 1: 2*num_compartments);
-I = x(:, 2*num_compartments + 1: 3*num_compartments);
-R = x(:, 3*num_compartments + 1: 4*num_compartments);
-V = x(:, 4*num_compartments + 1: 5*num_compartments);
+S = y(:, 1:5:end);
+E = y(:, 2:5:end);
+I = y(:, 3:5:end);
+R = y(:, 4:5:end);
+V = y(:, 5:5:end);
 
 % Plotting
 figure;
@@ -113,14 +116,13 @@ function dx = SIV(t, x, betas, sigmas, k, alphas, Incomes, gammas, lambdas)
     end
 end
 
-function betas = calculate_betas(n_values, constant, eta_vax, distances)
+function betas = calculate_betas(n_values, constant, eta_vax, distances, beta_star)
     num_compartments = length(n_values);
-    beta_star = 1.67391974668301e-08;
     betas = zeros(num_compartments, num_compartments);
     
     % Loop to calculate betas matrix
     for i = 1:num_compartments
-        for j = 1:num_compartments
+        for j = 1:num_compartments  
             distance_between_i_and_j = distances(i, j); % Assuming the distance matrix is properly formatted
             
             % Calculate betas based on the given formula for transmission matrix

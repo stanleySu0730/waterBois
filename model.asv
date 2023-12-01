@@ -5,7 +5,7 @@ info = readtable('id_zipcode_income_density.csv');
 table2cell(info);
 Incomes = info(:,3);
 n_values = info(:,4);
-age = info(:,5);
+ageArray = info(:,5);
 %%
 % Define parameters
 days=length(culmulativeCases(30:60));        
