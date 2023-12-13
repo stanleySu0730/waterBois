@@ -28,16 +28,17 @@ tspan_newark = 10:size(newark, 1);
 % Define parameters       
 tspan = 10:size(fremont, 1);             
 
-beta_star = 4.042E-7;  % beta value for the general population - estimated earlier
+beta_star = 3.842E-7;  % beta value for the general population - estimated earlier
+totalpop = 0;
 for j = 1:size(pop)
     totalpop = totalpop + pop(j);
 end
 
 sigma = 1.0028E-5;  % rate at which recovered people lose immunity. 
 k = 0.25;  % rate at which exposed become infected.
-alpha = 100; % shedding rate of virus per infected person
+alpha = 25000; % shedding rate of virus per infected person
 delta = 0.38; % recovery rate of infected people
-epsilon = 0.34; % death rate
+epsilon = 0.05; % death rate
 h = 0.1; % recovery rate of exposed people
 k_p = 0.000439453125; % used in population function
 A = 60.5756327138564;% parameter for population density dependence function
@@ -51,6 +52,7 @@ betas = calculate_betas(n_values, totalpop,distance1,beta_star,A,B,k_p,pop);
 I1 = fremont(10,1) - fremont(1,1);
 E1 = .40 * (fremont(10,1) - fremont(1,1));
 R1 = .95 * (fremont(1,1));
+Vnan1 = find(isnan(fremont(:,4)));
 V1 = fremont(10,4);
 S1 = 63911 - I1 - R1 - E1;
 CI1 = fremont(10,1);
@@ -58,6 +60,7 @@ CI1 = fremont(10,1);
 I2=newark(10,1) - newark(10,1);            
 E2=.40*(newark(10,1) - newark(1,1));          
 R2=.95*( newark(1,1));
+Vnan2 = find(isnan(newark(:,4)));
 V2= newark(10,4); 
 S2=44245-I2-R2-E2;
 CI2 = newark(10,1);
@@ -101,13 +104,14 @@ xlabel('Time');
 ylabel('CI');
 
 subplot(2, 1, 2);
-plot(tspan, V_sf);
+daily_V_newark = [V_sf(1); diff(y(:, 5))];
+semilogy(tspan, daily_V_newark, 'b.'); % Scatter plot for daily change in V (San Francisco)
 hold on;
-semilogy(tspan_newark, viralRNA_newark(10:end), 'b.'); % Scatter plot for viralRNA in V (San Francisco)
+semilogy(tspan_newark, viralRNA_newark(10:end), 'r.'); % Scatter plot for viralRNA in V (San Francisco)
 hold off;
-title('Newark - Compartment V over time with Viral RNA');
+title('Newark - Daily change in Compartment V over time');
 xlabel('Time');
-ylabel('V');
+ylabel('Daily Change in V');
 
 % Plotting Marina data
 figure;
@@ -121,13 +125,14 @@ xlabel('Time');
 ylabel('CI');
 
 subplot(2, 1, 2);
-plot(tspan, V_marina);
+daily_V_fremont = [V_sf(1); diff(y(:, 5))];
+semilogy(tspan, daily_V_fremont, 'b.'); % Scatter plot for daily change in V (San Francisco)
 hold on;
-semilogy(tspan_fremont, viralRNA_fremont(10:end), 'b.'); % Scatter plot for viralRNA in V (Marina)
+semilogy(tspan_fremont, viralRNA_fremont(10:end), 'r.'); % Scatter plot for viralRNA in V (San Francisco)
 hold off;
-title('Fremont - Compartment V over time with Viral RNA');
+title('Fremont - Daily change in Compartment V over time');
 xlabel('Time');
-ylabel('V');
+ylabel('Daily Change in V');
 
 function dx = SIV(t, x, betas, sigma, k, alpha, h, delta, epsilon) 
     % Determine the number of compartments based on the length of the state vector x
@@ -177,8 +182,8 @@ function betas = calculate_betas(n_values, totalpop, distance, beta_star, A, B, 
             
             % Calculate betas
             distance_term = 1 / (1 + distance_between_i_and_j);
-            exponential_term = exp(-k_p * totalpop);
-            betas(i, j) = (beta_star/pop(i)) * pop(j) * (A + B * exponential_term) * distance_term;
+            exponential_term = exp(-k_p * n_values(j));
+            betas(i, j) = (beta_star/totalpop) * pop(j) * (A + B * exponential_term) * distance_term;
         end
     end
 end

@@ -28,12 +28,12 @@ tspan_marina = 10:size(marina, 1);
 % Define parameters       
 tspan = 10:size(sanfrancisco, 1);             
 
-beta_star = 5.342E-7;  % beta value for the general population - estimated earlier
+beta_star = 1.942E-6;  % beta value for the general population - estimated earlier
 totalpop = 56503; % population of sf + marina
 
 sigma = 1.0028E-5;  % rate at which recovered people lose immunity. 
 k = 0.25;  % rate at which exposed become infected.
-alpha = 100; % shedding rate of virus per infected person
+alpha = 15000; % shedding rate of virus per infected person
 delta = 0.38; % recovery rate of infected people
 epsilon = 0.05; % death rate
 h = 0.1; % recovery rate of exposed people
@@ -100,13 +100,14 @@ xlabel('Time');
 ylabel('CI');
 
 subplot(2, 1, 2);
-semilogy(tspan, V_sf);
+daily_V_sf = [V_sf(1); diff(y(:, 5))];
+semilogy(tspan, daily_V_sf, 'b.'); % Scatter plot for daily change in V (San Francisco)
 hold on;
-semilogy(tspan_sf, viralRNA_sf(10:end), 'b.'); % Scatter plot for viralRNA in V (San Francisco)
+semilogy(tspan_sf, viralRNA_sf(10:end), 'r.'); % Scatter plot for viralRNA in V (San Francisco)
 hold off;
-title('San Francisco - Compartment V over time with Viral RNA');
+title('SF - Daily change in Compartment V over time');
 xlabel('Time');
-ylabel('V');
+ylabel('Daily Change in V');
 
 % Plotting Marina data
 figure;
@@ -120,13 +121,14 @@ xlabel('Time');
 ylabel('CI');
 
 subplot(2, 1, 2);
-semilogy(tspan, V_marina);
+daily_V_marina = [V_marina(1); diff(y(:, 5))];
+semilogy(tspan, daily_V_marina, 'b.'); % Scatter plot for daily change in V (Marina)
 hold on;
-semilogy(tspan_marina, viralRNA_marina(10:end), 'b.'); % Scatter plot for viralRNA in V (Marina)
+semilogy(tspan_marina, viralRNA_marina(10:end), 'r.'); % Scatter plot for viralRNA in V (Marina)
 hold off;
-title('Marina - Compartment V over time with Viral RNA');
+title('Marina - Daily change in Compartment V over time');
 xlabel('Time');
-ylabel('V');
+ylabel('Daily Change in V');
 
 function dx = SIV(t, x, betas, sigma, k, alpha, h, delta, epsilon) 
     % Determine the number of compartments based on the length of the state vector x
@@ -176,8 +178,8 @@ function betas = calculate_betas(n_values, totalpop, distance, beta_star, A, B, 
             
             % Calculate betas
             distance_term = 1 / (1 + distance_between_i_and_j);
-            exponential_term = exp(-k_p * totalpop);
-            betas(i, j) = (beta_star/pop(i)) * pop(j) * (A + B * exponential_term) * distance_term;
+            exponential_term = exp(-k_p * n_values(j));
+            betas(i, j) = (beta_star/totalpop) * pop(j) * (A + B * exponential_term) * distance_term;
         end
     end
 end
