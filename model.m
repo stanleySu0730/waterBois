@@ -129,47 +129,75 @@ end
 % Plotting SEIRV and CI compartments for each region
 regions = {'Marina', 'San Francisco', 'Fremont', 'Newark', 'San Leandro', 'Union City'};
 
-for i = 1:6
-    % Create a new figure for SEIRV compartments of each region
-    figure;
-    
-    % Plotting S, E, I, R, V, CI compartments for each region
-    subplot(3, 2, 1);
-    plot(t, S(:, i));
-    title(['S Compartment for ', regions{i}]);
-    xlabel('Time');
-    ylabel('Population');
-    
-    subplot(3, 2, 2);
-    plot(t, E(:, i));
-    title(['E Compartment for ', regions{i}]);
-    xlabel('Time');
-    ylabel('Population');
-    
-    subplot(3, 2, 3);
-    plot(t, I(:, i));
-    title(['I Compartment for ', regions{i}]);
-    xlabel('Time');
-    ylabel('Population');
-    
-    subplot(3, 2, 4);
-    plot(t, R(:, i));
-    title(['R Compartment for ', regions{i}]);
-    xlabel('Time');
-    ylabel('Population');
-    
-    subplot(3, 2, 5);
-    semilogy(t, abs(daily_V(:, i)), '.'); % Plotting semilogy scatter plot
-    title(['V Compartment for ', regions{i}]);
-    xlabel('Time');
-    ylabel('Population');
+% Create a new figure for SEIRV compartments
+figure;
 
-    subplot(3, 2, 6);
-    plot(t, CI(:, i));
-    title(['CI Compartment for ', regions{i}]);
-    xlabel('Time');
-    ylabel('Cumulative Infections');
+% Plotting S, E, I, R, V, CI compartments for all regions on a single graph
+subplot(3, 2, 1);
+hold on;
+for i = 1:6
+    plot(t, S(:, i) ./ pop(i), 'DisplayName', regions{i});
 end
+hold off;
+title('S Compartment for All Regions');
+xlabel('Time');
+ylabel('Susceptible / Population');
+legend('Location', 'best');
+
+subplot(3, 2, 2);
+hold on;
+for i = 1:6
+    plot(t, E(:, i) ./ pop(i), 'DisplayName', regions{i});
+end
+hold off;
+title('E Compartment for All Regions');
+xlabel('Time');
+ylabel('Exposed / Population');
+legend('Location', 'best');
+
+subplot(3, 2, 3);
+hold on;
+for i = 1:6
+    plot(t, I(:, i) ./ pop(i), 'DisplayName', regions{i});
+end
+hold off;
+title('I Compartment for All Regions');
+xlabel('Time');
+ylabel('Infected / Population');
+legend('Location', 'best');
+
+subplot(3, 2, 4);
+hold on;
+for i = 1:6
+    plot(t, R(:, i) ./ pop(i), 'DisplayName', regions{i});
+end
+hold off;
+title('R Compartment for All Regions');
+xlabel('Time');
+ylabel('Recovered / Population');
+legend('Location', 'best');
+
+subplot(3, 2, 5);
+hold on;
+for i = 1:6
+    semilogy(t, abs(daily_V(:, i)), '.', 'DisplayName', regions{i});
+end
+hold off;
+title('V Compartment for All Regions');
+xlabel('Time');
+ylabel('Population');
+legend('Location', 'best');
+
+subplot(3, 2, 6);
+hold on;
+for i = 1:6
+    plot(t, CI(:, i) ./ pop(i), 'DisplayName', regions{i});
+end
+hold off;
+title('CI Compartment for All Regions');
+xlabel('Time');
+ylabel('Cumulative Infections / Population');
+legend('Location', 'best');
 
 function dx = SIV(t, x, betas, sigma, k, alpha, h, delta, epsilon) 
     % Determine the number of compartments based on the length of the state vector x
