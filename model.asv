@@ -15,9 +15,7 @@ load('sanleandro.mat');
 sanleandro = flipud(sanleandro);
 load('unioncity.mat');
 unioncity = flipud(unioncity);
-load('pop.mat');
 info = info(2:7,:);
-pop = caseswastewatervaccine(1:end,:);
 % info([2,5],:);
 Incomes = info(:,3);
 n_values = info(:,4);
@@ -43,7 +41,7 @@ A = 60.5756327138564;% parameter for population density dependence function
 B = 3.561063241554381;% parameter for population density dependence function
 
 % Calculate betas
-betas = calculate_betas(n_values, totalpop,distance,beta_star,A,B,k_p,pop);
+betas = calculate_betas(n_values, totalpop,distance1,beta_star,A,B,k_p,pop);
 
 %%
 % Define initial conditions for three compartments (S, E, I, R, V)
@@ -87,22 +85,19 @@ V5 = sanleandro(10,4);
 S5 = 48666 - I5 - R5 - E5;
 CI5 = sanleandro(10,1);
 
-I6=unioncity(10,1) - unioncity(10,1);            
-E6=.40*(unioncity(10,1) - unioncity(1,1));          
-R6=.95*( unioncity(1,1));
-Vnan6 = find(isnan(unioncity(:,4)));
-V6= unioncity(10,4); 
-S6=72446-I6-R6-E6;
-CI6 = unioncity(10,1);
+I4=newark(10,1) - newark(10,1);            
+E4=.40*(newark(10,1) - newark(1,1));          
+R4=.95*( newark(1,1));
+Vnan4 = find(isnan(newark(:,4)));
+V4= newark(10,4); 
+S4=44245-I4-R4-E4;
+CI4 = newark(10,1);
 
 % Combine initial conditions into a single vector
 initial_conditions = [
     S1;E1;I1;R1;V1;CI1;
     S2;E2;I2;R2;V2;CI2;
     S3;E3;I3;R3;V3;CI3;
-    S4;E4;I4;R4;V4;CI4;
-    S5;E5;I5;R5;V5;CI5;
-    S6;E6;I6;R6;V6;CI6;
 ];
 
 %%
@@ -111,65 +106,51 @@ initial_conditions = [
 %%
 % Extract compartments from the solution
 num_compartments = length(initial_conditions) / 6;
-S = y(:, 1:6:end);
-E = y(:, 2:6:end);
-I = y(:, 3:6:end);
-R = y(:, 4:6:end);
-V = y(:, 5:6:end);
-CI = y(:, 6:6:end);
+S = y(:, 1:7:end);
+E = y(:, 2:7:end);
+I = y(:, 3:7:end);
+R = y(:, 4:7:end);
+V = y(:, 5:7:end);
+CI = y(:, 6:7:end);
 
-% Calculate Daily_V for each region
-daily_V = zeros(size(V));
-for i = 1:size(V, 2)
-    daily_V(1, i) = V(1, i); % Set the first value of daily_V as V(1)
-    for j = 2:length(V)
-        daily_V(j, i) = V(j, i) - V(j-1, i); % Calculate the difference for subsequent values
-    end
-end
-% Plotting SEIRV and CI compartments for each region
-regions = {'Marina', 'San Francisco', 'Fremont', 'Newark', 'San Leandro', 'Union City'};
+% Plotting
+figure;
+% Plotting compartments
+subplot(3, 3, 1);
+plot(t, S);
+title('Compartment S over time');
+xlabel('Time');
+ylabel('S');
 
-for i = 1:6
-    % Create a new figure for SEIRV compartments of each region
-    figure;
-    
-    % Plotting S, E, I, R, V, CI compartments for each region
-    subplot(3, 2, 1);
-    plot(t, S(:, i));
-    title(['S Compartment for ', regions{i}]);
-    xlabel('Time');
-    ylabel('Population');
-    
-    subplot(3, 2, 2);
-    plot(t, E(:, i));
-    title(['E Compartment for ', regions{i}]);
-    xlabel('Time');
-    ylabel('Population');
-    
-    subplot(3, 2, 3);
-    plot(t, I(:, i));
-    title(['I Compartment for ', regions{i}]);
-    xlabel('Time');
-    ylabel('Population');
-    
-    subplot(3, 2, 4);
-    plot(t, R(:, i));
-    title(['R Compartment for ', regions{i}]);
-    xlabel('Time');
-    ylabel('Population');
-    
-    subplot(3, 2, 5);
-    semilogy(t, abs(daily_V(:, i)), '.'); % Plotting semilogy scatter plot
-    title(['V Compartment for ', regions{i}]);
-    xlabel('Time');
-    ylabel('Population');
+subplot(3, 3, 2);
+plot(t, E);
+title('Compartment E over time');
+xlabel('Time');
+ylabel('E');
 
-    subplot(3, 2, 6);
-    plot(t, CI(:, i));
-    title(['CI Compartment for ', regions{i}]);
-    xlabel('Time');
-    ylabel('Cumulative Infections');
-end
+subplot(3, 3, 3);
+plot(t, I);
+title('Compartment I over time');
+xlabel('Time');
+ylabel('I');
+
+subplot(3, 3, 4);
+plot(t, R);
+title('Compartment R over time');
+xlabel('Time');
+ylabel('R');
+
+subplot(3, 3, 5);
+plot(t, V);
+title('Compartment V over time');
+xlabel('Time');
+ylabel('V');
+
+subplot(3, 3, 6);
+plot(t, CI);
+title('Compartment CI over time');
+xlabel('Time');
+ylabel('CI');
 
 function dx = SIV(t, x, betas, sigma, k, alpha, h, delta, epsilon) 
     % Determine the number of compartments based on the length of the state vector x
@@ -219,7 +200,7 @@ function betas = calculate_betas(n_values, totalpop, distance, beta_star, A, B, 
             
             % Calculate betas
             distance_term = 1 / (1 + distance_between_i_and_j);
-            exponential_term = exp(-k_p * n_values(i));
+            exponential_term = exp(-k_p * n_values(j));
             betas(i, j) = (beta_star/totalpop) * pop(j) * (A + B * exponential_term) * distance_term;
         end
     end

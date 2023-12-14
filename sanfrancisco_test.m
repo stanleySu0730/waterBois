@@ -4,7 +4,7 @@ data=readtable('cases_wastewater_vaccine.csv');
 load('distance_small.mat');
 load('info.mat');%column2 - zipcodes, column3 - income, column4 - population, column5 - age
 load('pop.mat');
-load('sanfrancisco_new.mat');
+load('sanfrancisco.mat');
 sanfrancisco = flipud(sanfrancisco);
 load('marina.mat');
 pop = caseswastewatervaccine(1:2,:);
@@ -33,13 +33,13 @@ totalpop = 56503; % population of sf + marina
 
 sigma = 1.0028E-5;  % rate at which recovered people lose immunity. 
 k = 0.25;  % rate at which exposed become infected.
-alpha = 15000; % shedding rate of virus per infected person
+alpha = 100000; % shedding rate of virus per infected person
 delta = 0.38; % recovery rate of infected people
 epsilon = 0.05; % death rate
 h = 0.1; % recovery rate of exposed people
-k_p = 0.000439453125; % used in population function
-A = 60.5756327138564;% parameter for population density dependence function
-B = 3.561063241554381;% parameter for population density dependence function
+k_p = 0.000439; % used in population function
+A = [17,2500];% parameter for population density dependence function
+B = [10,3];% parameter for population density dependence function
 
 % Calculate betas
 betas = calculate_betas(n_values, totalpop,distance1,beta_star,A,B,k_p,pop);
@@ -162,7 +162,7 @@ function dx = SIV(t, x, betas, sigma, k, alpha, h, delta, epsilon)
     end
 end
 
-function betas = calculate_betas(n_values, totalpop, distance, beta_star, A, B, k_p,pop)
+function betas = calculate_betas(n_values, totalpop, distance, beta_star, A, B, k_p, pop)
     % Calculate the transmission rates (betas) between compartments
     
     % Determine the number of compartments based on the length of n_values
@@ -178,8 +178,8 @@ function betas = calculate_betas(n_values, totalpop, distance, beta_star, A, B, 
             
             % Calculate betas
             distance_term = 1 / (1 + distance_between_i_and_j);
-            exponential_term = exp(-k_p * n_values(j));
-            betas(i, j) = (beta_star/totalpop) * pop(j) * (A + B * exponential_term) * distance_term;
+            exponential_term = exp(-k_p * n_values(i));
+            betas(i, j) = (beta_star / totalpop) * pop(j) * (A(i) + B(i) * exponential_term) * distance_term;
         end
     end
 end
